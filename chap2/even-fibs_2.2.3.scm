@@ -133,4 +133,4 @@
     )
 )
 
-(display (product-of-squares-of-odd-elements (list 1 2 3 4 5)))
+;(display (product-of-squares-of-odd-elements (list 1 2 3 4 5)))
