@@ -1,2 +1,6 @@
 # sicp_learning
 sicp课后习题代码  
+
+cons与list关系 append 等等 傻傻分不清
+
+2.40 - 2.42 flatmap 较为吃力
