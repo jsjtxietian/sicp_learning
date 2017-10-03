@@ -1,0 +1,21 @@
+(load "C:\\Users\\jsjtx\\Desktop\\sicp_learning\\chap2\\union-set_2.59.scm")
+
+(define (adjoin-set x set) (cons x set))
+
+(define (intersection-set set another)
+    (define (iter set result)
+        (if (or (null? set) (null? another))
+            (reverse result)
+            (let ((current-element (car set))
+                (remain-element (cdr set)))
+                (if (and (element-of-set? current-element another)
+                        (not (element-of-set? current-element result)))
+                    (iter remain-element
+                        (cons current-element result))
+                    (iter remain-element result)
+                )
+            )
+        )
+    )
+    (iter set '())
+)
