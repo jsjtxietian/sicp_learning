@@ -1,3 +1,9 @@
+;p186 table
+;load something
+(define operation-table (make-table))
+(define get (operation-table 'lookup-proc))
+(define put (operation-table 'insert-proc!))
+
 (define (add-complex z1 z2)
     (make-from-real-imag 
         (+ (real-part z1) (real-part z2))
@@ -74,6 +80,7 @@
         (lambda (x y) (tag (make-from-real-imag x y))))
     (put 'make-from-mag-ang   'rectangular
         (lambda (x y) (tag (make-from-mag-ang x y))))
+    'done    
 )
 
 (define (install-polar-package)
@@ -100,6 +107,7 @@
         (lambda (x y) (tag (make-from-real-imag x y)))
     (put 'make-from-mag-ang 'polar
         (lambda (r a) (tag (make-from-mag-ang r a))))
+    'done
 )
 
 (define (apply-generic op . args)
