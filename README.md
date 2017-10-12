@@ -8,6 +8,6 @@
 * 注意路径
 
 ##参考资料：
-http://sicp.readthedocs.io/en/latest/index.html
-http://community.schemewiki.org/?SICP-Solutions
-https://mitpress.mit.edu/sicp/full-text/book/book.html
+* http://sicp.readthedocs.io/en/latest/index.html
+* http://community.schemewiki.org/?SICP-Solutions
+* https://mitpress.mit.edu/sicp/full-text/book/book.html
