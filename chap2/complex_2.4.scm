@@ -1,32 +1,3 @@
-
-; (define (add-complex z1 z2)
-;     (make-from-real-imag 
-;         (+ (real-part z1) (real-part z2))
-;         (+ (imag-part z1) (imag-part z2))
-;     )
-; )
-
-; (define (sub-complex z1 z2)
-;     (make-from-real-imag 
-;         (- (real-part z1) (real-part z2))
-;         (- (imag-part z1) (imag-part z2))
-;     )
-; )
-
-; (define (mul-complex z1 z2)
-;     (make-from-mag-ang 
-;         (* (magnitude z1) (magnitude z2))
-;         (+ (angle z1) (angle z2))
-;     )
-; )
-
-; (define (div-complex z1 z2)
-;     (make-from-mag-ang 
-;         (/ (magnitude z1) (magnitude z2))
-;         (- (angle z1) (angle z2))
-;     )
-; )
-
 (define (square x) (* x x))
 
 (define (attach-tag type-tag contents) (cons type-tag contents))
@@ -45,14 +16,6 @@
     )
 )
 
-; (define (rectangular? z)
-;     (eq? (type-tag z) 'rectangular)
-; )
-
-; (define (polar? z)
-;     (eq? (type-tag z) 'polar)
-; )
-
 (define (install-rectangular-package)
 
     ;internal procedures
@@ -69,10 +32,12 @@
 
     ;interface to the rest of the system
     (define (tag x) (attach-tag 'rectangular x))
+
     (put 'real-part '(rectangular) real-part)
     (put 'imag-part '(rectangular) imag-part)
     (put 'magnitude '(rectangular) magnitude)
     (put 'angle     '(rectangular) angle)
+
     (put 'make-from-real-imag 'rectangular
         (lambda (x y) (tag (make-from-real-imag x y))))
     (put 'make-from-mag-ang   'rectangular
@@ -134,42 +99,44 @@
     ((get 'make-from-mag-ang 'polar) r a)
 )
 
-
+;抄来的 
 
 (define (assoc key records)
-(cond ((null? records) false)
-      ((equal? key (caar records)) (car records))
-      (else (assoc key (cdr records)))))
+    (cond ((null? records) false)
+        ((equal? key (caar records)) (car records))
+        (else (assoc key (cdr records))))
+)
 
 (define (make-table)
-(let ((local-table (list '*table*)))
-  (define (lookup key-1 key-2)
-    (let ((subtable (assoc key-1 (cdr local-table))))
-      (if subtable
-          (let ((record (assoc key-2 (cdr subtable))))
-            (if record
-                (cdr record)
-                false))
-          false)))
-  (define (insert! key-1 key-2 value)
-    (let ((subtable (assoc key-1 (cdr local-table))))
-      (if subtable
-          (let ((record (assoc key-2 (cdr subtable))))
-            (if record
-                (set-cdr! record value)
-                (set-cdr! subtable
-                          (cons (cons key-2 value)
-                                (cdr subtable)))))
-          (set-cdr! local-table
-                    (cons (list key-1
-                                (cons key-2 value))
-                          (cdr local-table)))))
-    'ok)    
-  (define (dispatch m)
-    (cond ((eq? m 'lookup-proc) lookup)
-          ((eq? m 'insert-proc!) insert!)
-          (else (error "Unknown operation -- TABLE" m))))
-  dispatch))
+    (let ((local-table (list '*table*)))
+    (define (lookup key-1 key-2)
+        (let ((subtable (assoc key-1 (cdr local-table))))
+        (if subtable
+            (let ((record (assoc key-2 (cdr subtable))))
+                (if record
+                    (cdr record)
+                    false))
+            false)))
+    (define (insert! key-1 key-2 value)
+        (let ((subtable (assoc key-1 (cdr local-table))))
+        (if subtable
+            (let ((record (assoc key-2 (cdr subtable))))
+                (if record
+                    (set-cdr! record value)
+                    (set-cdr! subtable
+                            (cons (cons key-2 value)
+                                    (cdr subtable)))))
+            (set-cdr! local-table
+                        (cons (list key-1
+                                    (cons key-2 value))
+                            (cdr local-table)))))
+        'ok)    
+    (define (dispatch m)
+        (cond ((eq? m 'lookup-proc) lookup)
+            ((eq? m 'insert-proc!) insert!)
+            (else (error "Unknown operation -- TABLE" m))))
+    dispatch)
+)
 
 (define operation-table (make-table))
 (define get (operation-table 'lookup-proc))
