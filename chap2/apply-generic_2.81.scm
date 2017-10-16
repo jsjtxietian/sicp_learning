@@ -37,9 +37,9 @@
     )
 )
 
-(define (exp x y) (apply-generic 'exp x y))
+; (define (exp x y) (apply-generic 'exp x y))
 
-(define (scheme-number->scheme-number n) n)
-(put-coercion 'scheme-number 'scheme-number scheme-number->scheme-number)
-(define (complex->complex z) z)
-(put-coercion 'complex 'complex complex->complex)
+; (define (scheme-number->scheme-number n) n)
+; (put-coercion 'scheme-number 'scheme-number scheme-number->scheme-number)
+; (define (complex->complex z) z)
+; (put-coercion 'complex 'complex complex->complex)
