@@ -19,6 +19,9 @@
         (lambda (x) (tag x)))
     (put 'exp '(scheme-number scheme-number)
         (lambda (x y) (tag (expt x y))))
+    (put 'raise '(scheme-number) 
+        (lambda (x) (make-rational (contents x) 1)))
+        
     'done
 )
 
@@ -58,6 +61,10 @@
         (lambda (x y) (tag (div-rat x y))))
     (put 'make 'rational
         (lambda (n d) (tag (make-rat n d))))
+    (put 'raise '(rational) 
+        (lambda (x)
+            (make-complex-from-real-imag (/ (numer (contents x)) (denom (contents x))) 0)))    
+            
     'done
 )
 
@@ -114,3 +121,5 @@
 (install-complex-package)
 (install-rational-package)
 (install-scheme-number-package)
+
+
