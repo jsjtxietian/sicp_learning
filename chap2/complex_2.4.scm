@@ -141,3 +141,7 @@
 (define operation-table (make-table))
 (define get (operation-table 'lookup-proc))
 (define put (operation-table 'insert-proc!))
+
+;;;
+(install-polar-package)
+(install-rectangular-package)

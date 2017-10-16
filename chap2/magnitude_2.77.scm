@@ -17,6 +17,8 @@
         (lambda (x y) (tag (/ x y))))
     (put 'make 'scheme-number
         (lambda (x) (tag x)))
+    (put 'exp '(scheme-number scheme-number)
+        (lambda (x y) (tag (expt x y))))
     'done
 )
 
@@ -109,4 +111,6 @@
 
 (define (make-complex-from-mag-ang r a) ((get 'make-from-mag-ang 'complex) r a))
 
-
+(install-complex-package)
+(install-rational-package)
+(install-scheme-number-package)
