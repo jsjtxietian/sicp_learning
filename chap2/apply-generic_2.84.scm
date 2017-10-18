@@ -66,12 +66,7 @@
     (let ((item-type (type-tag item))) 
         (if (eq? item-type type) 
             item 
-            (let ((raise-fn (get 'raise (list item-type)))) 
-                (if raise-fn 
-                    (raise-to-type type (raise-fn item)) 
-                    #f
-                )
-            )
+            (raise-to-type type (raise item))
         )
     )
 ) 

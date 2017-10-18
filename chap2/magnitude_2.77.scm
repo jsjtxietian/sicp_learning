@@ -20,7 +20,10 @@
     (put 'exp '(scheme-number scheme-number)
         (lambda (x y) (tag (expt x y))))
     (put 'raise '(scheme-number) 
-        (lambda (x) (make-rational (contents x) 1)))
+        (lambda (x)
+            (make-rational x 1)))
+    (put 'equal '(scheme-number scheme-number)
+        (lambda (x y) (= x y)))
         
     'done
 )
@@ -32,8 +35,8 @@
     (define (numer x) (car x))
     (define (denom x) (cdr x))
     (define (make-rat n d)
-    (let ((g (gcd n d)))
-        (cons (/ n g) (/ d g))))
+        (let ((g (gcd n d)))
+            (cons (/ n g) (/ d g))))
     (define (add-rat x y)
         (make-rat (+ (* (numer x) (denom y))
                 (* (numer y) (denom x)))
@@ -63,7 +66,14 @@
         (lambda (n d) (tag (make-rat n d))))
     (put 'raise '(rational) 
         (lambda (x)
-            (make-complex-from-real-imag (/ (numer (contents x)) (denom (contents x))) 0)))    
+            (make-complex-from-real-imag (/ (numer x) (denom x)) 0)))
+    (put 'equal '(rational rational)
+        (lambda (x y) 
+            (and
+                (= (numer x) (numer y))
+                (= (denom x) (denom y)))))
+    (put 'project '(rational)
+        (lambda (x) (make-scheme-number (/ (numer x) (denom x)))))  
             
     'done
 )
@@ -90,6 +100,7 @@
     (define (div-complex z1 z2)
         (make-from-mag-ang (/ (magnitude z1) (magnitude z2))
                             (- (angle z1) (angle z2))))
+    
 
     ;; interface to rest of the system
     (define (tag z) (attach-tag 'complex z))
@@ -105,6 +116,15 @@
         (lambda (x y) (tag (make-from-real-imag x y))))
     (put 'make-from-mag-ang 'complex
         (lambda (r a) (tag (make-from-mag-ang r a))))
+    (put 'equal '(complex complex)
+        (lambda (x y) 
+            (and 
+                (= (real-part x) (real-part y))
+                (= (imag-part x) (imag-part y)))))
+    (put 'project '(complex)
+        (lambda (x) 
+            (make-rational (real-part x) 1)))
+
 
     (put 'real-part '(complex) real-part)
     (put 'imag-part '(complex) imag-part)
@@ -114,9 +134,11 @@
     'done
 )
 
-(define (make-complex-from-real-imag x y) ((get 'make-from-real-imag 'complex) x y))
+(define (make-complex-from-real-imag x y) 
+    ((get 'make-from-real-imag 'complex) x y))
 
-(define (make-complex-from-mag-ang r a) ((get 'make-from-mag-ang 'complex) r a))
+(define (make-complex-from-mag-ang r a) 
+    ((get 'make-from-mag-ang 'complex) r a))
 
 (install-complex-package)
 (install-rational-package)
