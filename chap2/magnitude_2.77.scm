@@ -24,7 +24,10 @@
             (make-rational x 1)))
     (put 'equal '(scheme-number scheme-number)
         (lambda (x y) (= x y)))
-        
+    (put 'sine '(scheme-number) 
+        (lambda (x) (tag (sin x)))) 
+    (put 'cosine '(scheme-number) 
+        (lambda (x) (tag (cos x))))   
     'done
 )
 
@@ -74,7 +77,10 @@
                 (= (denom x) (denom y)))))
     (put 'project '(rational)
         (lambda (x) (make-scheme-number (/ (numer x) (denom x)))))  
-            
+    (put 'sine '(rational) 
+        (lambda (x) (sin (/ (numer x) (denom x)))))  
+    (put 'cosine '(rational) 
+        (lambda (x) (cos (/ (numer x) (denom x)))))         
     'done
 )
 
