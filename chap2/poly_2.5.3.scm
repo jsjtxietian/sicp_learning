@@ -1,6 +1,4 @@
-(load "C:\\Users\\jsjtx\\Desktop\\sicp_learning\\chap2\\drop_2.85.scm")
-
-
+(load "C:\\Users\\jsjtx\\Desktop\\sicp_learning\\chap2\\scheme-number_2.78.scm")
 
 
 (define (install-polynomial-package)
@@ -15,23 +13,36 @@
             (variable? v2)
             (eq? v1 v2)))
             
+    (define (adjoin-term term term-list)
+        (if (=zero? (coeff term))
+            term-list
+            (cons term term-list)))
+
+    (define (the-empty-termlist) '())
+    (define (first-term term-list) (car term-list))
+    (define (rest-terms term-list) (cdr term-list))
+    (define (empty-termlist? term-list) (null? term-list))
+    (define (make-term order coeff) (list order coeff))
+    (define (order term) (car term))
+    (define (coeff term) (cadr term))
+            
     (define (add-terms L1 L2)
         (cond
             ((empty-termlist? L1) L2)
             ((empty-termlist? L2) L1)
             (else
-                (let ((t1 (first-term L1) (t2 (first-term L2))))
+                (let ((t1 (first-term L1)) (t2 (first-term L2)))
                     (cond
                         ((> (order t1) (order t2))
                             (adjoin-term t1
                                          (add-terms (rest-terms L1) L2)))
                         ((< (order t1) (order t2))
-                            (adjoin-term t2)
-                                         (add-terms L1 (rest-terms L2)))
+                            (adjoin-term t2
+                                         (add-terms L1 (rest-terms L2))))
                         (else
                             (adjoin-term
                                 (make-term (order t1)
-                                           (add (ceoff t1) (ceoff t2)))
+                                           (add (coeff t1) (coeff t2)))
                                 (add-terms (rest-terms L1)
                                            (rest-terms L2)))))))))
     (define (mul-terms L1 L2)
@@ -39,7 +50,14 @@
             (the-empty-termlist)
             (add-terms (mul-term-by-all-terms (first-term L1) L2)
                        (mul-terms (rest-terms L1) L2))))
-    ()
+    (define (mul-term-by-all-terms t1 L)
+        (if (empty-termlist? L)
+            (the-empty-termlist)
+            (let ((t2 (first-term L)))
+                (adjoin-term
+                    (make-term (+ (order t1) (order t2))
+                                (mul (coeff t1) (coeff t2)))
+                    (mul-term-by-all-terms t1 (rest-terms L))))))
 
     (define (add-poly p1 p2)
         (if (same-variable? (variable p1) (variable p2))
@@ -51,7 +69,7 @@
     (define (mul-poly p1 p2)
         (if (same-variable? (variable p1) (variable p2))
             (make-poly (variable p1)
-                    (mult-terms (term-list p1)
+                    (mul-terms (term-list p1)
                                 (term-list p2)))
             (error "Polys not in same var -- MULT-POLY" (list p1 p2))))
 
@@ -65,26 +83,10 @@
     'done
 )
 
-;;;删掉了drop
-(define (apply-generic op . args) 
-    (let ((type-tags (map type-tag args))) 
-        (define (no-method) 
-            (error "No method for these types" (list op type-tags))
-        ) 
-        (let ((proc (get op type-tags))) 
-            (if proc                                     
-                (apply proc (map contents args))
-                (if (not (null? (cdr args))) ; length of args > 1 
-                    (let ((raised-args (raise-to-common args))) 
-                        (if raised-args 
-                            (let ((proc (get op (map type-tag raised-args)))) 
-                                (if proc
-                                    (apply proc (map contents raised-args))
-                                    (no-method))) 
-                        (no-method))) 
-                    (no-method)
-                )
-            )
-        )
-    )
+(define (make-polynomial var terms)
+    ((get 'make 'polynomial) var terms)
 )
+
+(define (=zero? x) (apply-generic '=zero? x))
+
+(install-polynomial-package)

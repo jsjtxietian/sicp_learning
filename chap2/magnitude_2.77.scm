@@ -28,6 +28,10 @@
         (lambda (x) (tag (sin x)))) 
     (put 'cosine '(scheme-number) 
         (lambda (x) (tag (cos x))))   
+
+    (put '=zero? '(scheme-number)
+        (lambda (x) 
+            (= x 0)))
     'done
 )
 
@@ -80,7 +84,11 @@
     (put 'sine '(rational) 
         (lambda (x) (sin (/ (numer x) (denom x)))))  
     (put 'cosine '(rational) 
-        (lambda (x) (cos (/ (numer x) (denom x)))))         
+        (lambda (x) (cos (/ (numer x) (denom x)))))       
+            
+    (put '=zero? '(rational)
+        (lambda (x) 
+                (= (numer x) 0)))
     'done
 )
 
@@ -130,7 +138,11 @@
     (put 'project '(complex)
         (lambda (x) 
             (make-rational (real-part x) 1)))
-
+    (put '=zero? '(complex)
+        (lambda (x) 
+            (and 
+                (= (real-part x) 0)
+                (= (imag-part x) 0))))
 
     (put 'real-part '(complex) real-part)
     (put 'imag-part '(complex) imag-part)
