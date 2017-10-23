@@ -32,6 +32,10 @@
     (put '=zero? '(scheme-number)
         (lambda (x) 
             (= x 0)))
+    (put 'negate '(scheme-number)
+        (lambda (x) (tag (- x))))
+
+
     'done
 )
 
@@ -89,6 +93,11 @@
     (put '=zero? '(rational)
         (lambda (x) 
                 (= (numer x) 0)))
+    (put 'negate '(rational)
+        (lambda (x) 
+                (tag (make-rat (- (numer x)) (denom x)))))
+    
+
     'done
 )
 
@@ -143,6 +152,9 @@
             (and 
                 (= (real-part x) 0)
                 (= (imag-part x) 0))))
+    (put 'negate '(complex)
+        (lambda (x) 
+            (make-from-real-imag (- (real-part x)) (- (imag-part x)))))
 
     (put 'real-part '(complex) real-part)
     (put 'imag-part '(complex) imag-part)

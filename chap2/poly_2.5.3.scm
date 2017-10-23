@@ -72,6 +72,12 @@
                     (mul-terms (term-list p1)
                                 (term-list p2)))
             (error "Polys not in same var -- MULT-POLY" (list p1 p2))))
+    (define (negate-poly p)
+        (make-poly (variable p)
+            (map 
+                (lambda (term) 
+                    (make-term (order term) (negate (coeff term)))) 
+                (term-list p))))
 
     (define (tag p) (attach-tag 'polynomial p))
     (put 'add '(polynomial polynomial) 
@@ -80,6 +86,14 @@
         (lambda (p1 p2) (tag (mul-poly p1 p2))))
     (put 'make 'polynomial 
         (lambda (var terms) (tag (make-poly var terms))))
+
+    (put '=zero? '(polynomial)
+        (lambda (x) (empty-termlist? (term-list p))))
+    (put 'sub '(polynomial polynomial) 
+        (lambda (p1 p2) (tag (add-poly p1 (negate-poly p2)))))
+    (put 'negate '(polynomial)
+        (lambda (x) (tag (negate-poly x))))  
+        
     'done
 )
 
@@ -88,5 +102,6 @@
 )
 
 (define (=zero? x) (apply-generic '=zero? x))
+(define (negate x) (apply-generic 'negate x))
 
 (install-polynomial-package)
