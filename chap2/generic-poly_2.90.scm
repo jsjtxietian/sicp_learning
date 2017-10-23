@@ -1,5 +1,149 @@
 (load "C:\\Users\\jsjtx\\Desktop\\sicp_learning\\chap2\\poly_2.5.3.scm")
 
+; 稠密多项式
+(define (install-dense-package)
+
+    (define (adjoin-term term term-list)
+        (if (emtpy-termlist? term-list)
+            term
+            (list term term-list)))
+
+    (define the-empty-termlist '())
+
+    (define (first-term term-list) 
+        (make-term-for-dense (car term-list) (length term-list)))
+
+    (define (rest-term term-list) (cdr term-list))
+    (define (emtpy-termlist? term-list) (null? term-list))
+
+    (define (make-term-for-dense order coeff)
+        (define (iter order)
+            (if (= 0 order)
+                '(0)
+                (cons 0 (iter (- order 1)))))
+        (cons coeff (iter (- order 1))))
+
+    (define (order term) (+ 1 (length term)))
+    (define (coeff term) (car term))
+
+    (define (add-terms L1 L2)
+        (cond 
+            ((empty-termlist? L1) L2)
+            ((empty-termlist? L2) L1)
+            (else 
+            (let ((t1 (length L1))
+                    (t2 (length L2)))
+                (let ((diff (- t1 t2)))
+                (cond
+                    ((= 0 diff) 
+                    (cons (add (car L1) (car L2))
+                            (add-terms (cdr L1) (cdr L2))))
+                    ((> 0 diff)  ; t2 阶数高
+                    (cons (car L2)
+                            (add-terms L1 (cdr L2))))
+                    (else
+                    (cons (car L1)
+                            (add-terms (cdr L1) L2)))))))))
+    (define (mul-terms L1 L2)
+        (if (empty-termlist? L1)
+            (the-empty-termlist)
+            (let ((rests (rest-terms L1)))
+            (add-terms (mul-term-by-all-terms (first-term L1) L2)
+                    (mul-terms rests L2)))))
+
+    (define (mul-term-by-all-terms t1 L)
+        (if (empty-termlist? L)
+            (the-empty-termlist)
+            (let ((t2 (first-term L)))
+            (adjoin-term
+                (make-term (+ (order t1) (order t2))
+                        (mul (coeff t1) (coeff t2)))
+                (mul-term-by-all-terms t1 (rest-terms L))))))
+
+    ; 外部接口
+    (define (tag t) (cons 'dense t))
+
+    (put 'adjoin-term 'dense
+        (lambda (term term-list) (tag (adjoin-term term term-list))))
+    (put 'make-term-for-dense 'dense
+        (lambda (order coeff) (tag (make-term-for-dense order coeff))))
+    (put 'add-terms 'dense
+        (lambda (L1 L2) (tag (add-terms L1 L2))))
+    (put 'mul-terms 'dense
+        (lambda (L1 L2) (tag (mul-terms L1 L2))))
+'done
+)
+
+; 稀疏多项式
+(define (install-sparse-package)
+
+    (define (adjoin-term term term-list)
+        (if (=zero? (coff term))
+            term-list
+            (cons term term-list)))
+    (define (the-empty-termlist) '())
+    (define (first-term term-list)
+        (car term-list))
+    (define (rest-term term-list)
+        (cdr term-list))
+    (define (empty-termlist? term-list)
+        (null? term-list))
+    (define (make-term-for-sparse order coeff)
+        (list order coeff))
+    (define (order term)
+        (car term))
+    (define (coeff term)
+        (cadr term))
+
+    (define (add-terms L1 L2)
+        (cond 
+            ((empty-termlist? L1) L2)
+            ((empty-termlist? L2) L1)
+            (else 
+            (let ((t1 (first-term L1))
+                    (t2 (first-term L2)))
+                (cond 
+                ((> (order t1) (order t2)) 
+                    (adjoin-term t1 (add-terms (rest-term L1) L2)))
+                ((< (order t1) (order t2)) 
+                    (adjoin-term t2 (add-terms L1 (rest-term L2))))
+                (else
+                    (adjoin-term
+                        (make-term (order t1) (add (coeff t1) (coeff t2)))  
+                        (add-terms (rest-term L1) (rest-term L2)))))))))
+
+    (define (mul-terms L1 L2)
+        (if (empty-termlist? L1)
+            (the-empty-termlist)
+            (add-terms (mul-term-by-all-terms (first-term L1) L2)
+                    (mul-terms (rest-terms L1) L2))))
+
+    (define (mul-term-by-all-terms t1 L)
+        (if (empty-termlist? L)
+            (the-empty-termlist)
+            (let ((t2 (first-term L)))
+            (adjoin-term
+                (make-term (+ (order t1) (order t2))
+                        (mul (coeff t1) (coeff t2)))
+                (mul-term-by-all-terms t1 (rest-terms L))))))
+
+    ; 外部接口
+    (define (tag t) (attch-tag 'sparse t))
+
+    (put 'adjoin-term 'sparse
+        (lambda (term term-list) (tag (adjoin-term term term-list))))
+    (put 'add-terms 'sparse
+        (lambda (L1 L2) (tag (add-terms L1 L2))))
+    (put 'mul-terms 'sparse
+        (lambda (L1 L2) (tag (mul-terms L1 L2))))
+    (put 'make-term 'sparse
+        (lambda (order coeff) (tag (make-term-for-sparse order coeff))))
+'done
+)
+
+(install-dense-package)
+(install-sparse-package)
+
 
 (define (install-polynomial-package)
 
@@ -12,77 +156,9 @@
             (variable? v1)
             (variable? v2)
             (eq? v1 v2)))
+           
     
-    (define (adjoin-term term term-list) 
-        (let ((preped-term ((get 'prep-term (type-tag term-list)) term)) 
-                (preped-first-term ((get 'prep-term (type-tag term-list)) 
-                                    (first-term term-list)))) 
-            (cond ((=zero? (coeff term)) term-list)  
-                ((empty-termlist? term-list) (append (the-empty-termlist term-list)  
-                                                        preped-term 
-                                                        (zero-pad (order term) 
-                                                                (type-tag 
-                                                                    term-list)))) 
-                ((> (order term) (order (first-term term-list))) 
-                    (append (list (car term-list)) 
-                            preped-term  
-                            (zero-pad (- (- (order term) 
-                                            (order (first-term term-list))) 
-                                        1) (type-tag term-list)) 
-                            (cdr term-list))) 
-                (else 
-                    (append preped-first-term  
-                            (adjoin-term term (rest-terms term-list)))))))
 
-    (define (first-term term-list)
-        (list (- (length term-list) 1) (car term-list)))
-
-
-    (define (rest-terms term-list) 
-        (let ((proc (get 'rest-terms (type-tag term-list)))) 
-            (if proc 
-                (proc term-list) 
-                (error "-- REST-TERMS" term-list)))) 
-    (define (empty-termlist? term-list) 
-        (let ((proc (get 'empty-termlist? (type-tag term-list)))) 
-            (if proc 
-                (proc term-list) 
-                (error "-- EMPTY-TERMLIST?" term-list)))) 
-    (define (make-term order coeff) (list order coeff)) 
-    (define (order term) 
-        (if (pair? term) 
-            (car term) 
-            (error "Term not pair -- ORDER" term))) 
-    (define (coeff term) 
-        (if (pair? term) 
-            (cadr term) 
-            (error "Term not pair -- COEFF" term))) 
-    (define (the-empty-termlist term-list) 
-        (let ((proc (get 'the-empty-termlist (type-tag term-list)))) 
-        (if proc 
-            (proc) 
-            (error "No proc found -- THE-EMPTY-TERMLIST" term-list)))) 
-    
-            
-    (define (add-terms L1 L2)
-        (cond
-            ((empty-termlist? L1) L2)
-            ((empty-termlist? L2) L1)
-            (else
-                (let ((t1 (first-term L1)) (t2 (first-term L2)))
-                    (cond
-                        ((> (order t1) (order t2))
-                            (adjoin-term t1
-                                         (add-terms (rest-terms L1) L2)))
-                        ((< (order t1) (order t2))
-                            (adjoin-term t2
-                                         (add-terms L1 (rest-terms L2))))
-                        (else
-                            (adjoin-term
-                                (make-term (order t1)
-                                           (add (coeff t1) (coeff t2)))
-                                (add-terms (rest-terms L1)
-                                           (rest-terms L2)))))))))
     (define (mul-terms L1 L2)
         (if (empty-termlist? L1)
             (the-empty-termlist)
@@ -110,11 +186,6 @@
                     (mul-terms (term-list p1)
                                 (term-list p2)))
             (error "Polys not in same var -- MULT-POLY" (list p1 p2))))
-   
-    (define (negate p) 
-    (let ((neg-p ((get 'make-polynomial (type-tag (term-list p))) 
-                  (variable p) (list (make-term 0 -1))))) 
-        (mul-poly (cdr neg-p) p)))
 
     (define (tag p) (attach-tag 'polynomial p))
     (put 'add '(polynomial polynomial) 
@@ -127,96 +198,12 @@
     (put '=zero? '(polynomial)
         (lambda (x) (empty-termlist? (term-list p))))
     (put 'sub '(polynomial polynomial) 
-        (lambda (p1 p2) (tag (add-poly p1 (negate p2)))))
+        (lambda (p1 p2) (tag (add-poly p1 (negate-poly p2)))))
     (put 'negate '(polynomial)
-        (lambda (x) (tag (negate x))))  
+        (lambda (x) (tag (negate-poly x))))  
         
     'done
 )
-  
-(define (first-term term-list) 
-    (let ((proc (get 'first-term (type-tag term-list)))) 
-        (if proc 
-            (proc term-list) 
-            (error "No first-term for this list -- FIRST-TERM" term-list)))) 
 
 
-(define (install-polynomial-term-package) 
-    (define (first-term-dense term-list) 
-        (if (empty-termlist? term-list) 
-            '() 
-            (list 
-            (- (length (cdr term-list)) 1) 
-            (car (cdr term-list)))))
 
-    (define (first-term-sparse term-list) 
-        (if (empty-termlist? term-list) 
-            '() 
-            (cadr term-list)))
-
-    (define (prep-term-dense term) 
-        (if (null? term) 
-            '() 
-            (cdr term)))
-                                
-    (define (prep-term-sparse term) 
-        (if (null? term) 
-            '() 
-            (list term)))
-                             
-    (define (the-empty-termlist-dense) '(dense)) 
-    (define (the-empty-termlist-sparse) '(sparse)) 
-    (define (rest-terms term-list) (cons (type-tag term-list) (cddr term-list))) 
-    (define (empty-termlist? term-list)  
-        (if (pair? term-list)  
-            (>= 1 (length term-list)) 
-            (error "Term-list not pair -- EMPTY-TERMLIST?" term-list))) 
-    (define (make-polynomial-dense var terms) 
-        (make-polynomial var (cons 'dense (map cadr terms)))) 
-    (define (make-polynomial-sparse var terms) 
-        (make-polynomial var (cons 'sparse terms))) 
-    (put 'first-term 'sparse  
-        (lambda (term-list) (first-term-sparse term-list))) 
-    (put 'first-term 'dense 
-        (lambda (term-list) (first-term-dense term-list))) 
-    (put 'prep-term 'dense 
-        (lambda (term) (prep-term-dense term))) 
-    (put 'prep-term 'sparse 
-        (lambda (term) (prep-term-sparse term))) 
-    (put 'rest-terms 'dense 
-        (lambda (term-list) (rest-terms term-list))) 
-    (put 'rest-terms 'sparse 
-        (lambda (term-list) (rest-terms term-list))) 
-    (put 'empty-termlist? 'dense 
-        (lambda (term-list) (empty-termlist? term-list))) 
-    (put 'empty-termlist? 'sparse 
-        (lambda (term-list) (empty-termlist? term-list))) 
-    (put 'the-empty-termlist 'dense 
-        (lambda () (the-empty-termlist-dense))) 
-    (put 'the-empty-termlist 'sparse 
-        (lambda () (the-empty-termlist-sparse))) 
-    (put 'make-polynomial 'sparse 
-        (lambda (var terms) (make-polynomial-sparse var terms))) 
-    (put 'make-polynomial 'dense 
-        (lambda (var terms) (make-polynomial-dense var terms))) 
-'done
-) 
-
-(install-polynomial-term-package)     
-(install-polynomial-package)
- 
- 
-; I had to changhe the adjoin-term procedure. It now does  
-; zero padding so we can `mul` dense polynomials correctly.  
- 
-(define (zero-pad x type) 
-    (if (eq? type 'sparse) 
-        '() 
-        (if (= x 0) 
-            '() 
-            (cons 0 (add-zeros (- x 1)))))) 
- 
- 
- 
-
- 
