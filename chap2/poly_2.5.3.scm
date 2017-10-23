@@ -12,19 +12,34 @@
             (variable? v1)
             (variable? v2)
             (eq? v1 v2)))
-            
-    (define (adjoin-term term term-list)
-        (if (=zero? (coeff term))
-            term-list
-            (cons term term-list)))
 
-    (define (the-empty-termlist) '())
-    (define (first-term term-list) (car term-list))
+    ;;稀疏的多项式        
+    ; (define (adjoin-term term term-list)
+    ;     (if (=zero? (coeff term))
+    ;         term-list
+    ;         (cons term term-list)))
+     
+    ; (define (first-term term-list) (car term-list))
+
+    ;;稠密的多项式
+    (define (adjoin-term term term-list)
+        (cond 
+            ((=zero? (coeff term)) term-list)
+            ((= (order term) (length term-list)) (cons (coeff term) term-list))
+            (else
+                (adjoin-term term (cons 0 term-list)))))
+
+    (define (first-term term-list)
+        (list (- (length term-list) 1) (car term-list)))
+
+
     (define (rest-terms term-list) (cdr term-list))
     (define (empty-termlist? term-list) (null? term-list))
     (define (make-term order coeff) (list order coeff))
     (define (order term) (car term))
     (define (coeff term) (cadr term))
+    (define (the-empty-termlist) '())
+    
             
     (define (add-terms L1 L2)
         (cond
@@ -72,11 +87,21 @@
                     (mul-terms (term-list p1)
                                 (term-list p2)))
             (error "Polys not in same var -- MULT-POLY" (list p1 p2))))
+   
+    ;;稀疏表示
+    ; (define (negate-poly p)
+    ;     (make-poly (variable p)
+    ;         (map 
+    ;             (lambda (term) 
+    ;                 (make-term (order term) (negate (coeff term)))) 
+    ;             (term-list p))))
+    
+    ;;稠密表示
     (define (negate-poly p)
         (make-poly (variable p)
             (map 
                 (lambda (term) 
-                    (make-term (order term) (negate (coeff term)))) 
+                    (negate term)) 
                 (term-list p))))
 
     (define (tag p) (attach-tag 'polynomial p))
