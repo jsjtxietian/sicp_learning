@@ -186,7 +186,9 @@
     (define (adjoin-term term term-list)
         (let ((proc (get 'adjoin-term (type-tag term-list))))
             (proc term (contents term-list))
-            (error "error types -- term-list " term-list)))   
+            (error "error types -- term-list " term-list)))
+    (define (negate-poly p)
+        (attach-tag (variable p) ((get 'negate (type-tag (term-list p))) (contents (term-list p)))))   
 
     (define (tag p) (attach-tag 'polynomial p))
 
@@ -199,8 +201,10 @@
     (put 'make 'polynomial-sparse 
         (lambda (var terms) (tag (make-poly var (attach-tag 'sparse terms)))))
     (put 'negate '(polynomial)
-        (lambda (p) (tag (attach-tag (variable p) ((get 'negate (type-tag (term-list p))) (contents (term-list p))))))) 
-        
+        (lambda (p) (tag (negate-poly p)))) 
+    (put 'sub '(polynomial polynomial)
+        (lambda (x y) (tag (add-poly x (negate-poly y)))))
+            
     'done
 )
 
@@ -215,4 +219,7 @@
 )
 
 (define x (make-polynomial-dense 'x '(1 2 3 0 5)))
+(define z (make-polynomial-dense 'x '(1 2 3 1 5 6)))
+
 (define y (make-polynomial-sparse 'x '((10 1) (5 2) (1 1))))
+
