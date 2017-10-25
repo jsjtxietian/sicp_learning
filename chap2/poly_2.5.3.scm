@@ -14,15 +14,6 @@
             (variable? v2)
             (eq? v1 v2)))
 
-    ;;稀疏的多项式        
-    ; (define (adjoin-term term term-list)
-    ;     (if (=zero? (coeff term))
-    ;         term-list
-    ;         (cons term term-list)))
-     
-    ; (define (first-term term-list) (car term-list))
-
-    ;;稠密的多项式
     (define (adjoin-term term term-list)
         (cond 
             ((=zero? (coeff term)) term-list)
@@ -40,7 +31,15 @@
     (define (order term) (car term))
     (define (coeff term) (cadr term))
     (define (the-empty-termlist) '())
-    
+
+    (define (negate-term-list t)
+        (map
+            (lambda (term) (negate term))
+            t))
+
+    (define (negate-poly p)
+        (make-poly (variable p)
+            (negate-term-list (term-list p))))
             
     (define (add-terms L1 L2)
         (cond
@@ -88,7 +87,36 @@
                     (mul-terms (term-list p1)
                                 (term-list p2)))
             (error "Polys not in same var -- MULT-POLY" (list p1 p2))))
-   
+    
+    (define (div-poly p1 p2) 
+        (if (same-variable? (variable p1) (variable p2)) 
+            (let ((result (div-terms (term-list p1) 
+                                    (term-list p2)))) 
+                (list (make-poly (variable p1) 
+                                (car result)) 
+                    (make-poly (variable p1) 
+                                (cadr result)))) 
+            (error "Variable is not the same -- DIV-POLY" (list (variable p1) (variable p2))))) 
+
+    (define (div-terms l1 l2)  
+        (if (empty-termlist? l1) 
+          (list (the-empty-termlist) (the-empty-termlist)) 
+          (let ((t1 (first-term l1)) 
+                (t2 (first-term l2))) 
+            (if (> (order t2) (order t1)) 
+              (list (the-empty-termlist) l1) 
+              (let ((first-term (make-term (- (order t1) (order t2)) 
+                                           (div (coeff t1) (coeff t2))))) 
+                (let ((rest-of-result 
+                        (div-terms (add-terms l1 
+                                              (negate-term-list (mul-term-by-all-terms first-term 
+                                                                     l2))) 
+                                   l2))) 
+                  (list (adjoin-term first-term (car rest-of-result)) 
+                        (cadr rest-of-result)))))))) 
+
+
+    
     ;;稀疏表示
     ; (define (negate-poly p)
     ;     (make-poly (variable p)
@@ -97,13 +125,12 @@
     ;                 (make-term (order term) (negate (coeff term)))) 
     ;             (term-list p))))
 
-    ;;稠密表示
-    (define (negate-poly p)
-        (make-poly (variable p)
-            (map 
-                (lambda (term) 
-                    (negate term)) 
-                (term-list p))))
+    ; (define (adjoin-term term term-list)
+    ;     (if (=zero? (coeff term))
+    ;         term-list
+    ;         (cons term term-list)))
+     
+    ; (define (first-term term-list) (car term-list))
 
     (define (tag p) (attach-tag 'polynomial p))
     (put 'add '(polynomial polynomial) 
@@ -112,13 +139,14 @@
         (lambda (p1 p2) (tag (mul-poly p1 p2))))
     (put 'make 'polynomial 
         (lambda (var terms) (tag (make-poly var terms))))
-
     (put '=zero? '(polynomial)
         (lambda (x) (empty-termlist? (term-list p))))
     (put 'sub '(polynomial polynomial) 
         (lambda (p1 p2) (tag (add-poly p1 (negate-poly p2)))))
     (put 'negate '(polynomial)
-        (lambda (x) (tag (negate-poly x))))  
+        (lambda (x) (tag (negate-poly x))))
+    (put 'div '(polynomial polynomial)
+        (lambda (p1 p2) (tag (div-poly p1 p2))))  
         
     'done
 )
@@ -130,4 +158,8 @@
 (define (=zero? x) (apply-generic '=zero? x))
 (define (negate x) (apply-generic 'negate x))
 
-;(install-polynomial-package)
+(install-polynomial-package)
+
+(define x (make-polynomial 'x '(1 2 4 0 5)))
+(define y (make-polynomial 'x '(1 0 0 0 -1)))
+(define z (make-polynomial 'x '(1 0 -1)))
