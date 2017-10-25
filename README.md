@@ -2,7 +2,7 @@
 ——sicp课后习题代码  
 
 ## 环境 DrRacket
-lang planet neil/sicp
+#lang planet neil/sicp
 
 ## 注意
 * cons与list关系 append 等等 傻傻分不清
