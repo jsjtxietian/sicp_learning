@@ -1,10 +1,10 @@
 # sicp_learning
 ——sicp课后习题代码  
 
-##环境 DrRacket
+## 环境 DrRacket
 lang planet neil/sicp
 
-##注意
+## 注意
 * cons与list关系 append 等等 傻傻分不清
 * 2.40 - 2.42 flatmap 较为吃力
 * 注意路径
@@ -14,7 +14,7 @@ lang planet neil/sicp
 * 2.82 
 * 2.92-第二章结束
 
-##参考资料：
+## 参考资料：
 * http://sicp.readthedocs.io/en/latest/index.html
 * http://community.schemewiki.org/?SICP-Solutions
 * https://mitpress.mit.edu/sicp/full-text/book/book.html
