@@ -116,7 +116,6 @@
                         (cadr rest-of-result)))))))) 
 
 
-    
     ;;稀疏表示
     ; (define (negate-poly p)
     ;     (make-poly (variable p)
@@ -161,5 +160,5 @@
 (install-polynomial-package)
 
 (define x (make-polynomial 'x '(1 2 4 0 5)))
-(define y (make-polynomial 'x '(1 0 0 0 -1)))
+(define y (make-polynomial 'x '(1 0 0 0 0 -1)))
 (define z (make-polynomial 'x '(1 0 -1)))
