@@ -36,11 +36,13 @@
                 (set-cdr! x y)
                 (loop temp x)
             )
-        )
+        ) 
     )
 
     (loop x '())
 )
 
- (define z (list 'a 'b 'c 'd))
- (define w (mystery z))
+;(define z (list 'a 'b 'c 'd))
+(define w (mystery z))
+
+
