@@ -42,7 +42,7 @@
     (loop x '())
 )
 
-;(define z (list 'a 'b 'c 'd))
+(define z (list 'a 'b 'c 'd))
 (define w (mystery z))
 
 
