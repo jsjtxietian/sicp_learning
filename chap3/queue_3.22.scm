@@ -48,11 +48,11 @@
     )
 )
 
-(define (empty-queue? queue) (queue 'empty-queue?))
+(define (empty-queue? queue) ((queue 'empty-queue?)))
 (define (insert-queue! queue item) ((queue 'insert-queue!) item))
-(define (delete-queue! queue) (queue 'delete-queue!))
-(define (front-queue queue) (queue 'front-queue))
-(define (print-queue queue) (queue 'print-queue))
+(define (delete-queue! queue) ((queue 'delete-queue!)))
+(define (front-queue queue) ((queue 'front-queue)))
+(define (print-queue queue) ((queue 'print-queue)))
 
 (define z (make-queue))
 
