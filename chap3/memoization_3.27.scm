@@ -14,7 +14,7 @@
     (let ((table (make-table)))
         (lambda (x)
             (let ((previously-computed-result (lookup x table)))
-                (or previously-computed-result
+                (or previously-computed-result ;利用or的性质，找到了直接返回 否则进行插入操作
                     (let ((result (f x)))
                         (insert! x result table)
                         result
