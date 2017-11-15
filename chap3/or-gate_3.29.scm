@@ -1,0 +1,11 @@
+(load "C:\\Users\\jsjtx\\Desktop\\sicp_learning\\chap3\\digital-circuits_3.3.4.scm")
+
+(define (or-gate a1 a2 output)
+    (let ((w1 (make-wire))
+            (w2 (make-wire))
+            (and-w1-w2 (make-wire)))
+        (invert a1 w1)
+        (invert a2 w2)
+        (and-gate w1 w2 and-w1-w2)
+        (invert and-w1-w2 output)
+        'ok))
