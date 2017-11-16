@@ -90,7 +90,7 @@
                 'done))
         (define (accept-action-procedure! proc)
             (set! action-procedures (cons proc action-procedures))
-            proc)
+            (proc))
         (define (dispatch m)
             (cond 
                 ((eq? m 'get-signal) signal-value)
@@ -184,7 +184,7 @@
             (front-queue (segment-queue first-seg)))))
 
 ;;模拟
-(define (prob name wire)
+(define (probe name wire)
     (add-action! wire
         (lambda () 
             (newline)
@@ -192,7 +192,8 @@
             (display " ")
             (display (current-time the-agenda))
             (display "  New-value = ")
-            (display (get-signal wire)))))
+            (display (get-signal wire))
+            (newline))))
 
 (define the-agenda (make-agenda))
 (define inverter-delay 2)
@@ -203,8 +204,8 @@
 (define sum (make-wire))
 (define carry (make-wire))
 
-(prob 'sum sum)
-(prob 'carry carry)
+(probe 'sum sum)
+(probe 'carry carry)
 
 
 (half-adder input-1 input-2 sum carry)
