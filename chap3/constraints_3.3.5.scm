@@ -1,29 +1,4 @@
 
-;;using
-(define C (make-connector))
-(define F (make-connector))
-(celsius-fahrenheit-concerter C F)
-
-(define (celsius-fahrenheit-concerter c f)
-    (let ((u (make-connector))
-            (v (make-connector))
-            (w (make-connector))
-            (x (make-connector))
-            (y (make-connector)))
-        (multiplier c w u)
-        (multiplier v x u)
-        (adder v y f)
-        (constant 9 w)
-        (constant 5 x)
-        (constant 32 y)
-        'ok))
-
-(probe "Celsius temp" C)
-(probe "Fahrenheit temp" F)
-
-(set-value! C 25 'user)
-(forget-value! C 'user)
-(set-value! F 212 'user)
 
 ;;Implementing
 (define (adder a1 a2 sum)
@@ -130,4 +105,101 @@ me)
     (connect connector me)
     me)
 
+(define (make-connector)
+    (let ((value #f) (informant #f) (constraints '()))
+        (define (set-my-value newval setter)
+            (cond 
+                ((not (has-value? me)) 
+                    (set! value newval)
+                    (set! informant setter)
+                    (for-each-except setter
+                                    inform-about-value
+                                    constraints))
+                ((not (= value newval)) 
+                    (error "Contradiction" (list value newval)))
+                (else 'ignored)))
+        (define (forget-my-value retractor)
+            (if (eq? retractor informant)
+                (begin 
+                    (set! informant #f)
+                    (for-each-except retractor
+                                    inform-about-no-value
+                                    constraints))
+                'ignored))
+        (define (connect new-constraint)
+            (if (not (memq new-constraint constraints))
+                (set! constraints (cons new-constraint constraints)))
+            (if (has-value? me)
+                (inform-about-value new-constraint))
+            'done)
+        (define (me request)
+            (cond 
+                ((eq? request 'has-value?)
+                    (if informant
+                        #t
+                        #f))
+                ((eq? request 'value)
+                    value)
+                ((eq? request 'set-value!)
+                    set-my-value)
+                ((eq? request 'forget)
+                    forget-my-value)
+                ((eq? request 'connect)
+                    connect)
+                (else
+                    (error "Unknown operation -- CONNECTOR" request))))
+        me))
+
+(define (for-each-except exception procedure list)
+    (define (loop items)
+        (cond 
+            ((null? items) 'done)
+            ((eq? (car items) exception) (loop (cdr items)))
+            (else 
+                (procedure (car items))
+                (loop (cdr items)))))
+    (loop list))
+
+(define (has-value? connector)
+    (connector 'has-value?))
+
+(define (get-value connector)
+    (connector 'value))
+
+(define (set-value! connector new-value informant)
+    ((connector 'set-value!) new-value informant))
+
+(define (forget-value! connector retractor)
+    ((connector 'forget) retractor))
+
+(define (connect connector new-constraint)
+    ((connector 'connect) new-constraint))
+
+;;using
+(define (celsius-fahrenheit-concerter c f)
+    (let ((u (make-connector))
+            (v (make-connector))
+            (w (make-connector))
+            (x (make-connector))
+            (y (make-connector)))
+        (multiplier c w u)
+        (multiplier v x u)
+        (adder v y f)
+        (constant 9 w)
+        (constant 5 x)
+        (constant 32 y)
+        'ok))   
+
+(define C (make-connector))
+(define F (make-connector))
+(celsius-fahrenheit-concerter C F)
+
+
+
+(probe "Celsius temp" C)
+(probe "Fahrenheit temp" F)
+
+; (set-value! C 25 'user)
+; (forget-value! C 'user)
+; (set-value! F 212 'user)
     
