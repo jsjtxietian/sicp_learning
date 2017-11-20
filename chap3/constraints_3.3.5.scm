@@ -1,5 +1,4 @@
 
-
 ;;Implementing
 (define (adder a1 a2 sum)
     (define (process-new-value)
@@ -175,29 +174,31 @@ me)
 (define (connect connector new-constraint)
     ((connector 'connect) new-constraint))
 
+
+
 ;;using
-(define (celsius-fahrenheit-concerter c f)
-    (let ((u (make-connector))
-            (v (make-connector))
-            (w (make-connector))
-            (x (make-connector))
-            (y (make-connector)))
-        (multiplier c w u)
-        (multiplier v x u)
-        (adder v y f)
-        (constant 9 w)
-        (constant 5 x)
-        (constant 32 y)
-        'ok))   
+; (define (celsius-fahrenheit-concerter c f)
+;     (let ((u (make-connector))
+;             (v (make-connector))
+;             (w (make-connector))
+;             (x (make-connector))
+;             (y (make-connector)))
+;         (multiplier c w u)
+;         (multiplier v x u)
+;         (adder v y f)
+;         (constant 9 w)
+;         (constant 5 x)
+;         (constant 32 y)
+;         'ok))   
 
-(define C (make-connector))
-(define F (make-connector))
-(celsius-fahrenheit-concerter C F)
+; (define C (make-connector))
+; (define F (make-connector))
+; (celsius-fahrenheit-concerter C F)
 
 
 
-(probe "Celsius temp" C)
-(probe "Fahrenheit temp" F)
+; (probe "Celsius temp" C)
+; (probe "Fahrenheit temp" F)
 
 ; (set-value! C 25 'user)
 ; (forget-value! C 'user)
