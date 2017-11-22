@@ -1,4 +1,4 @@
-(load "stream_3.5.scm")
+(load "C:\\Users\\jsjtx\\Desktop\\sicp_learning\\chap3\\stream_3.5.scm")
 
 (define (stream-map proc . argstreams)
     (if (stream-null? (car argstreams))
