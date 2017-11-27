@@ -205,7 +205,7 @@
         (make-tableau transform
             (transform s))))
 
-(define (acclerated-sequence transform s)
+(define (accelerated-sequence transform s)
     (stream-map stream-cdr 
         (make-tableau transform s)))
 
