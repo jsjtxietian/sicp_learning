@@ -1,12 +1,8 @@
 (load "C:\\Users\\jsjtx\\Desktop\\sicp_learning\\chap3\\monte-carlo_3.1.2.scm")
 
-
-
 (define (random-in-range low high)
     (let ((range (- high low)))
-        (+ low (random high))
-    )
-)
+        (+ low (random high))))
 
 
 (define (estimate-integral p? x1 x2 y1 y2 trials)
