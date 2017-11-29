@@ -13,6 +13,7 @@
 * 图形语言支持不完善 2.49有bug 懒得找了 图形语言整体弃坑
 * 2.82，2.92-第二章结束
 * 3.4并发很随意
+* 3.69 - 3.72 
 
 ## 参考资料：
 * http://sicp.readthedocs.io/en/latest/index.html
