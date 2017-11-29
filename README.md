@@ -14,6 +14,7 @@
 * 2.82，2.92-第二章结束
 * 3.4并发很随意
 * 3.69 - 3.72 
+* 3.77-3.80 问题同注199 racket实现问题
 
 ## 参考资料：
 * http://sicp.readthedocs.io/en/latest/index.html
