@@ -2,10 +2,10 @@
 ——sicp课后习题代码  
 
 ## 环境 
-###DrRacket 
+### DrRacket 
 lang planet neil/sicp 
 lang sicp
-###chez scheme
+### chez scheme
 
 ## 尚未完成
 * 图形语言支持不完善 2.49有bug 懒得找了 图形语言整体弃坑
