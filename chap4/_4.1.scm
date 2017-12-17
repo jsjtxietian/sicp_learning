@@ -1,6 +1,9 @@
-#lang sicp
+;#lang sicp
+;;change apply -> APPLY
 
 (define apply-in-underlying-scheme apply)
+(define true #t)
+(define false #f)
 
 (define (eval exp env)
     (cond 
@@ -19,24 +22,26 @@
             (eval-sequence (begin-actions exp) env))
         ((cond? exp) (eval (cond->if exp) env))
         ((application? exp)
-            (Apply 
+            (APPLY 
                 (eval (operator exp) env)
                 (list-of-values (operands exp) env)))
         (else 
             (error "Unknown expression type -- EVALL" exp))))
 
-(define (Apply procedure arguments)
+(define (APPLY procedure arguments)
     (cond 
         ((primitive-procedure? procedure)
             (apply-primitive-procedure procedure arguments))
         ((compound-procedure? procedure)
-            (eval-sequence
-                (procedure-body procedure)
-                (extend-environment procedure)
-                arguments
-                (procedure-environment procedure)))
-        (else 
-            (error "Unknown procedure type -- APPLY" procedure))))
+         (eval-sequence
+           (procedure-body procedure)
+           (extend-environment
+             (procedure-parameters procedure)
+             arguments
+             (procedure-environment procedure))))
+        (else
+         (error
+          "Unknown procedure type -- APPLY" procedure))))
 
 (define (list-of-values exps env)
     (if (no-operands? exps)
@@ -117,7 +122,7 @@
 
 ;;lambda
 (define (lambda? exp)
-    (tagged-list? exp 'define))
+    (tagged-list? exp 'lambda))
 
 (define (lambda-parameters exp)
     (cadr exp))
@@ -228,7 +233,7 @@
     (cons variables values))
 
 (define (frame-variables frame) (car frame))
-(define (frame-vlaues frame) (cdr frame))
+(define (frame-values frame) (cdr frame))
 
 (define (add-binding-to-frame! var val frame)
     (set-car! frame (cons var (car frame)))
@@ -256,8 +261,8 @@
             (let ((frame (first-frame env))) 
                 (scan 
                     (frame-variables frame)
-                    (frame-vlaues frame)))))
-    (env env))
+                    (frame-values frame)))))
+    (env-loop env))
 
 (define (set-variale-value! var val env)
     (define (env-loop env)
@@ -274,7 +279,7 @@
             (let ((frame (first-frame env))) 
                 (scan 
                     (frame-variables frame)
-                    (frame-vlaues frame)))))
+                    (frame-values frame)))))
     (env-loop env))
 
 
@@ -290,24 +295,27 @@
                     (scan (cdr vars) (cdr vals)))))
         (scan 
             (frame-variables frame)
-            (frame-vlaues frame))))
+            (frame-values frame))))
 
 
 ;;4.1.4
-
-(define (primitive-procedure-objects)
-    (map 
-        (lambda (proc) (list 'primitive (cadr proc)))
-        primitive-procedures))
-
 (define (primitive-procedures)
     (list 
         (list 'car car)
         (list 'cdr cdr)
         (list 'cons cons)
         (list 'null? null?)
+        (list '+ +)
+        (list '- -)
+        (list '* *)
+        (list '/ /)
         ;others 
         ))
+
+(define (primitive-procedure-objects)
+    (map 
+        (lambda (proc) (list 'primitive (cadr proc)))
+        (primitive-procedures)))
 
 (define (primitive-procedure-names)
     (map car (primitive-procedures)))
@@ -322,7 +330,7 @@
         (define-variable! 'false false initial-env)
         initial-env))
 
-(define the-global-environment (setup-environment))
+
 
 (define (primitive-procedure? proc)
     (tagged-list? proc 'primitive))
@@ -367,5 +375,10 @@
                 'compound-procedure
                 (procedure-parameters object)
                 (procedure-body object)
-                ;;env
-                ))))
+                '<procedure-env>))
+        (display object)))
+
+(define the-global-environment (setup-environment))
+(driver-loop)
+
+;(define (append x y) (if (null? x) y (cons (car x) (append (cdr x) y))))
