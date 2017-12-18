@@ -1,10 +1,9 @@
 ;;;;**WARNING: Don't load this file twice (or you'll lose the primitives
 ;;;;  interface, due to renamings of apply).
 
-;;;from section 4.1.4 -- must precede def of metacircular apply
-
 ;#lang sicp
 
+;from section 4.1.4 -- must precede def of metacircular apply
 (define apply-in-underlying-scheme apply)
 (define true #t)
 (define false #f)
@@ -342,7 +341,7 @@
       (display object)))
 
 
-(define the-global-environment (setup-environment))
-(driver-loop)
+; (define the-global-environment (setup-environment))
+; (driver-loop)
 
 ;(define (append x y) (if (null? x) y (cons (car x) (append (cdr x) y))))
