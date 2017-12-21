@@ -5,9 +5,11 @@
    
 (define (cond-actions clause) 
     (if (special-cond? clause) 
-        (cons (caddr clause) (cond-predicate clause)) 
+        (list (caddr clause) (cond-predicate clause)) 
         (cdr clause))) 
 
 
 (define the-global-environment (setup-environment))
-; (driver-loop)
+(driver-loop)
+
+;(cond ((assoc 'b '((a 1) (b 2))) => cadr) (else false))
