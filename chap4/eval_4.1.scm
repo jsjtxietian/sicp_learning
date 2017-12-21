@@ -301,6 +301,8 @@
         (list '- -)
         (list '/ /)
         (list '* *)
+        (list 'assoc assoc)
+        (list 'cadr cadr)
 ;;      more primitives
         ))
 
