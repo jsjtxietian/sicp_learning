@@ -1,4 +1,4 @@
-(load "eval_4.1.scm")
+(load "let_4.6.scm")
 
 (define (eval exp env)
   (cond ((self-evaluating? exp) exp)
@@ -13,6 +13,8 @@
                          env))
         ((let? exp)
             (eval (let->combination exp) env))
+        ((let*? exp)
+            (eval (let*->nested-lets exp) env))
         ((begin? exp) 
          (eval-sequence (begin-actions exp) env))
         ((cond? exp) (eval (cond->if exp) env))
@@ -22,30 +24,20 @@
         (else
          (error "Unknown expression type -- EVAL" exp))))
 
+(define (let*? exp)
+    (tagged-list? exp 'let*))
 
-(define (let? exp)
-    (tagged-list? exp 'let))
-    
-(define (let-vars expr) (map car (cadr expr))) 
-(define (let-inits expr) (map cadr (cadr expr))) 
-(define (let-body expr) (cddr expr)) 
-    
-(define (let->combination expr) 
-    (cons (make-lambda (let-vars expr) (let-body expr)) 
-        (let-inits expr))) 
+(define (let*-body exp)
+    (caddr exp))
 
-;(define the-global-environment (setup-environment))
-; (driver-loop)
+(define (let*-inits exp)
+    (cadr exp))
 
-
-
-
-
-
-
-
-
-
-
-
-           
+(define (let*->nested-lets exp)
+    (let ([inits (let*-inits exp)]
+            [body (let*-body exp)])
+        (define (make-lets exps)
+            (if (null? exps)
+                body
+                (list 'let (list (car exps)) (make-lets (cdr exps)) )))
+        (make-lets inits)))
