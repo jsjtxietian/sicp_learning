@@ -4,8 +4,10 @@
   (cond ((self-evaluating? exp) exp)
         ((variable? exp) (lookup-variable-value exp env))
         ((quoted? exp) (text-of-quotation exp))
-        ((and? exp) (eval-and (and-exp exp) env))
-        ((or? exp) (eval-or (or-exp exp) env))
+        ; ((and? exp) (eval-and (and-exp exp) env))
+        ; ((or? exp) (eval-or (or-exp exp) env))
+        ((and? exp) (eval (and->if exp) env))
+        ((or? exp) (eval (or->if exp) env))
         ((assignment? exp) (eval-assignment exp env))
         ((definition? exp) (eval-definition exp env))
         ((if? exp) (eval-if exp env))
@@ -47,7 +49,26 @@
         (else 
           (eval-or (rest-exps exps) env))))))
 
+(define (and->if exps)
+  (expand-and-operands (and-exp exps)))
+(define (or->if exps)
+  (expand-or-operands (or-exp exps)))
 
+(define (expand-and-operands exps)
+  (if (null? exps)  
+    'true
+    (make-if 
+      (first-exp exps)
+      (expand-and-operands (rest-exps exps))
+      'false)))
       
+(define (expand-or-operands exps)
+  (if (null? exps)  
+    'false
+    (make-if 
+      (first-exp exps)
+      'true
+      (expand-or-operands (rest-exps exps)))))
+    
 (define the-global-environment (setup-environment))
 ; (driver-loop)
