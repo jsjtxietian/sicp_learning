@@ -13,7 +13,7 @@ lang sicp
 * 3.4并发很随意
 * 3.69 - 3.72 
 * 3.77-3.80 问题同注199 racket实现问题
-* chap4 , chap5
+* 4.8 有bug
 
 ## 注意
 * cons与list关系 append 等等 傻傻分不清
