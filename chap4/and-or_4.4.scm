@@ -38,7 +38,14 @@
           (eval-and (rest-exps exps) env)))
       #f)))
 
-
+(define (eval-or exps env)
+  (let ((ans (eval (first-exp exps) env)))
+    (if ans 
+      #t
+      (cond 
+        ((last-exp? exps) #f)
+        (else 
+          (eval-or (rest-exps exps) env))))))
 
 
       
