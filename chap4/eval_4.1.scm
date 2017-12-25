@@ -300,12 +300,14 @@
         (list '+ +)
         (list '- -)
         (list '/ /)
-		(list '* *)
-		(list '= =)
+        (list '* *)
+        (list '= =)
         (list 'assoc assoc)
         (list 'cadr cadr)
-		(list 'display display)
-		(list 'newline newline)
+        (list 'display display)
+        (list 'newline newline)
+        (list '> >)
+        (list '< <)
 ;;      more primitives
         ))
 

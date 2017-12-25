@@ -1,3 +1,5 @@
+;;去看sicp 理解Y组合子
+
 (define x 
     ((lambda (n) 
         ((lambda (fact) 
