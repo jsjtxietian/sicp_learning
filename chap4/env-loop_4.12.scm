@@ -29,3 +29,6 @@
     (define (var-not-in-frame env) 
         (add-binding-to-frame! var val (first-frame env))) 
     (env-loop env var var-not-in-frame (set-val! val))) 
+
+; (define the-global-environment (setup-environment))
+; (driver-loop)

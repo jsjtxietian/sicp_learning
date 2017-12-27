@@ -41,5 +41,5 @@
             b
             (fib-iter (+ a b) a (- count 1)))))
 
-(define the-global-environment (setup-environment))
-(driver-loop)
+; (define the-global-environment (setup-environment))
+; (driver-loop)

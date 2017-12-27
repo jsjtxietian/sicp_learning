@@ -1,5 +1,3 @@
-;;wrong
-
 (load "let_4.6.scm")
 
 (define (eval exp env)
@@ -14,9 +12,9 @@
                 (lambda-body exp)
                 env))
         ((let? exp)
-            (begin (display exp) (eval (let->combination exp) env)))
+            (eval (let->combination exp) env))
         ((letrec? exp)
-            (begin (display exp ) (eval (letrec->let exp) env)))
+            (eval (letrec->let exp) env))
         ((begin? exp) 
             (eval-sequence (begin-actions exp) env))
         ((cond? exp) (eval (cond->if exp) env))
@@ -55,17 +53,18 @@
 (define the-global-environment (setup-environment))
 (driver-loop)
 
-; (define (f x)
-;     (letrec 
-;         ((even? 
-;             (lambda (n) 
-;                 (if (= n 0)
-;                     true)
-;                     (odd? (- n 1))))
-;         (odd? 
-;             (lambda (n) 
-;                 (if (= n 0)
-;                     false
-;                     (even? (- n 1))))))
-;     (odd? x)))
+;test
+(define (f x)
+    (letrec 
+        ((even? 
+            (lambda (n) 
+                (if (= n 0)
+                    true
+                    (odd? (- n 1)))))
+        (odd? 
+            (lambda (n) 
+                (if (= n 0)
+                    false
+                    (even? (- n 1))))))
+    (odd? x)))
 
