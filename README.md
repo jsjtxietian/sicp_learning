@@ -18,6 +18,7 @@ lang sicp
 * cons与list关系 append 等等 傻傻分不清
 * 2.40 - 2.42 flatmap 较为吃力
 * 注意路径
+* unbounded 有bug
 
 ## 参考资料：
 * http://sicp.readthedocs.io/en/latest/index.html
