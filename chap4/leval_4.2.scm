@@ -1,5 +1,11 @@
 (load "eval_4.1.scm")
 
+; 4.30
+; (define (eval-sequence exps env)
+;   (cond ((last-exp? exps) (eval (first-exp exps) env))
+;         (else (actual-value (first-exp exps) env)
+;               (eval-sequence (rest-exps exps) env))))
+
 (define (eval exp env)
     (cond ((self-evaluating? exp) exp)
         ((variable? exp) (lookup-variable-value exp env))
@@ -139,5 +145,5 @@
 		(driver-loop))
 
 
-(define the-global-environment (setup-environment))
-(driver-loop)
+; (define the-global-environment (setup-environment))
+; (driver-loop)
