@@ -1,4 +1,8 @@
-;;;正确性有待验证
+;;;需要对and & or 的支持
+(load "amb_4.3.3.scm")
+
+; (define the-global-environment (setup-environment))
+; (driver-loop)
 
 (define (an-integer-between a b) 
     (require (<= a b)) 
@@ -14,8 +18,8 @@
                 (= p (- q i)))) 
         (define (check rest i) 
             (cond  
-                ((null? rest) #t) 
-                ((conflict? (car rest) i) #f) 
+                ((null? rest) true) 
+                ((conflict? (car rest) i) false) 
                 (else (check (cdr rest) (inc i))))) 
         (check (cdr solution) 1))) 
  
@@ -32,3 +36,4 @@
     (iter '() n)) 
  
 (queens 8) 
+ 
